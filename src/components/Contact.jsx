@@ -1,4 +1,5 @@
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
 
 import {
 FaEnvelope,
@@ -24,31 +25,32 @@ setForm({
 });
 };
 
-const sendMessage=async(e)=>{
+const sendMessage=(e)=>{
 e.preventDefault();
 
-const response=await fetch(
-"http://localhost:5000/contact",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(form)
-}
-);
+emailjs.send(
+"service_z323vpy",
+"template_q02rtik",
+form,
+"xIyHQZiN1wTOyU4Vw"
+)
+.then(()=>{
+alert("Message envoyé avec succès ✅");
 
-const data=await response.json();
-
-alert(data.message);
+setForm({
+name:"",
+email:"",
+message:""
+});
+})
+.catch((error)=>{
+console.error(error);
+alert("Erreur lors de l'envoi");
+});
 };
 
 return(
-
-<section
-id="contact"
-className="section"
->
+<section id="contact" className="section">
 
 <h2>Contactez-moi</h2>
 
@@ -56,10 +58,8 @@ className="section"
 Disponible pour stages, freelance, collaborations et opportunités tech.
 </p>
 
-
 <div className="contact-wrapper">
 
-{/* LEFT CARD */}
 <motion.div
 className="contact-info glass"
 initial={{opacity:0,x:-50}}
@@ -92,6 +92,9 @@ className="contact-item"
 <FaPhoneAlt/>
 +39 379 218 2036
 </a>
+<a href="https://wa.me/393792182036">
+WhatsApp
+</a>
 
 <div className="contact-item">
 <FaMapMarkerAlt/>
@@ -111,11 +114,9 @@ GitHub Profile
 </motion.div>
 
 
-{/* FORM */}
 <motion.form
 onSubmit={sendMessage}
 className="contact-form glass"
-
 initial={{opacity:0,x:50}}
 whileInView={{opacity:1,x:0}}
 transition={{duration:.6}}
@@ -123,21 +124,24 @@ transition={{duration:.6}}
 
 <input
 name="name"
-placeholder="Votre nom"
+value={form.name}
 onChange={handleChange}
+placeholder="Votre nom"
 />
 
 <input
 name="email"
-placeholder="Votre email"
+value={form.email}
 onChange={handleChange}
+placeholder="Votre email"
 />
 
 <textarea
 name="message"
+value={form.message}
+onChange={handleChange}
 placeholder="Votre message..."
 rows="7"
-onChange={handleChange}
 />
 
 <button type="submit">
@@ -149,7 +153,6 @@ Envoyer le message
 </div>
 
 </section>
-
-)
+);
 
 }
